@@ -1,0 +1,61 @@
+server:
+  port: 8001
+
+## Spring Information
+spring:
+  application:
+    name: module1-api
+  main:
+    allow-bean-definition-overriding: true
+#  config:
+#    import:
+#      #      - optional:nacos:application-dev.yml # 监听 PROVIDER_GROUP :module1-api-dev.yml
+#      - optional:nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension} # 监听 DEFAULT_GROUP:module1-api-dev.yaml
+#      #              - optional:nacos:module1-api-dev.yaml?group=group_01  # 覆盖默认 group，监听 group_01:module1-api-dev.yaml
+#      #              - optional:nacos:module1-api-dev.yaml?group=group_02&refreshEnabled=false # 不开启动态刷新
+#      - nacos:${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension} # 在拉取nacos配置异常时会快速失败，会导致 spring 容器启动失败
+
+# 可在nacos配置的文件
+  datasource:
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true
+    username: root
+    password: admin@123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
+      config:
+        enabled: false
+        namespace: 3c42f17a-23f2-4f4f-8cf4-bfe086289312
+        group: user-center
+        context-path: /nacos
+        file-extension: yaml
+      discovery:
+        enabled: true
+        namespace: public
+        service: ${spring.application.name}
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - 'health'
+          - 'prometheus'
+    enabled-by-default: true
+
+# mybatis plus
+mybatis-plus:
+  config-location: classpath:/mybatis/mybatis-config.xml
+  mapper-locations: classpath:/mappers/*.xml
+
+# feign config
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 3000
+        readTimeout: 3000
